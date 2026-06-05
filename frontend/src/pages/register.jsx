@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/register.css";
-import { registerStudent, createRazorpayOrder } from "../services/api";
+import { registerStudent } from "../services/api";
 import Navbar from "../components/Navbar";
 
 function Register() {
@@ -12,15 +12,6 @@ function Register() {
     "Junior Batch (Kids)": "₹1200/month",
     "Arangetram Preparation": "₹5000/month",
     "Weekend Workshop": "₹1000/workshop",
-  };
-
-  const feeAmountMap = {
-    "Beginner Batch": 1500,
-    "Intermediate Batch": 2000,
-    "Advanced Batch": 2500,
-    "Junior Batch (Kids)": 1200,
-    "Arangetram Preparation": 5000,
-    "Weekend Workshop": 1000,
   };
 
   const [formData, setFormData] = useState({
@@ -70,45 +61,12 @@ function Register() {
 
   const registerUser = async () => {
     if (!validate()) return;
-
-    if (formData.payment === "Online Payment") {
-      try {
-        const amountInPaise = feeAmountMap[formData.batch] * 100;
-        const orderRes = await createRazorpayOrder(amountInPaise);
-        const { orderId, amount, currency } = orderRes.data;
-
-        const options = {
-          key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-          amount,
-          currency,
-          name: "Natyalaya",
-          description: `${formData.batch} Registration Fee`,
-          order_id: orderId,
-          handler: async (response) => {
-            await registerStudent({ ...formData, paymentId: response.razorpay_payment_id });
-            setShowModal(true);
-          },
-          prefill: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            contact: formData.phone,
-          },
-          theme: { color: "#7F2020" },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on("payment.failed", () => alert("Payment failed. Please try again."));
-        rzp.open();
-      } catch (error) {
-        alert(error.response?.data?.message || "Payment initiation failed.");
-      }
-    } else {
-      try {
-        await registerStudent(formData);
-        setShowModal(true);
-      } catch (error) {
-        alert(error.response?.data?.message || "Registration failed. Please try again.");
-      }
+    try {
+      const paymentId = formData.payment === "Online Payment" ? `PAY-${Date.now()}` : undefined;
+      await registerStudent({ ...formData, ...(paymentId && { paymentId }) });
+      setShowModal(true);
+    } catch (error) {
+      alert(error.response?.data?.message || "Registration failed. Please try again.");
     }
   };
 
