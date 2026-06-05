@@ -36,3 +36,6 @@ mongoose
   .catch((err) => {
     console.log("MongoDB connection failed", err);
   });
+app.get("/", (req, res) => {
+  res.send("Natyalaya Backend Running Successfully 🚀");
+});
