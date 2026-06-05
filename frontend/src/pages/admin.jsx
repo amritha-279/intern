@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/admin.css";
-import { FaUsers, FaClock, FaCheckCircle, FaRupeeSign, FaSignOutAlt } from "react-icons/fa";
+import { FaUsers, FaClock, FaCheckCircle, FaRupeeSign } from "react-icons/fa";
 import { getStatistics, getStudents, updateStudentStatus, deleteStudent } from "../services/api";
+import AdminNavbar from "../components/AdminNavbar";
 
 const Admin = () => {
-  const navigate = useNavigate();
   const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, monthlyRevenue: 0 });
   const [students, setStudents] = useState([]);
 
@@ -42,30 +42,9 @@ const Admin = () => {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.removeItem("natyalaya_token");
-    navigate("/login");
-  };
-
   return (
     <>
-      <nav className="admin-navbar">
-        <div className="admin-nav-logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul className="admin-nav-menu">
-          <li><Link to="/admin" className="active">Dashboard</Link></li>
-          <li><Link to="/statistics">Statistics</Link></li>
-          <li><Link to="/revenue">Revenue</Link></li>
-          <li><Link to="/messages">Messages</Link></li>
-          <li><Link to="/gallerymanager">Gallery Manager</Link></li>
-          <li className="logout-item">
-            <button onClick={handleLogout}><FaSignOutAlt /> Logout</button>
-          </li>
-        </ul>
-      </nav>
+      <AdminNavbar activePage="dashboard" />
 
       <section className="admin-hero">
         <div className="admin-hero-text">

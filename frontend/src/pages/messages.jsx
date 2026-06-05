@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../css/messages.css";
-import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaReply, FaCheckCircle, FaClock, FaTrash, FaSignOutAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaEnvelope, FaReply, FaCheckCircle, FaClock, FaTrash } from "react-icons/fa";
 import { getMessages, replyMessage, deleteMessage } from "../services/api";
+import AdminNavbar from "../components/AdminNavbar";
 
 const Messages = () => {
-  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState("");
@@ -45,34 +45,13 @@ const Messages = () => {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.removeItem("natyalaya_token");
-    navigate("/login");
-  };
-
   const total = messages.length;
   const unread = messages.filter((m) => m.status === "Unread").length;
   const responded = messages.filter((m) => m.status === "Responded").length;
 
   return (
     <div className="messages-page">
-      <nav className="admin-navbar">
-        <div className="admin-nav-logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul className="admin-nav-menu">
-          <li><Link to="/admin">Dashboard</Link></li>
-          <li><Link to="/statistics">Statistics</Link></li>
-          <li><Link to="/revenue">Revenue</Link></li>
-          <li><Link to="/messages" className="active">Messages</Link></li>
-          <li><Link to="/gallerymanager">Gallery Manager</Link></li>
-          <li className="logout-item">
-            <button onClick={handleLogout}><FaSignOutAlt /> Logout</button>
-          </li>
-        </ul>
-      </nav>
+      <AdminNavbar activePage="messages" />
 
       <section className="messages-hero">
         <h1>Student Messages</h1>

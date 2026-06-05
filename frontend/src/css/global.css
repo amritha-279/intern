@@ -42,3 +42,34 @@ html {
 .logout-btn:hover {
   background: #9a7625 !important;
 }
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+@media(max-width:1000px) {
+  nav ul {
+    display: none;
+  }
+  nav ul.nav-open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: var(--primary);
+    padding: 20px 8%;
+    gap: 20px;
+    z-index: 999;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .hamburger {
+    display: flex;
+  }
+}

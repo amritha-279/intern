@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/statistics.css";
-import { FaUsers, FaUserCheck, FaClock, FaRupeeSign, FaSignOutAlt } from "react-icons/fa";
+import { FaUsers, FaUserCheck, FaClock, FaRupeeSign } from "react-icons/fa";
 import { getStatistics } from "../services/api";
+import AdminNavbar from "../components/AdminNavbar";
 
 const Statistics = () => {
-  const navigate = useNavigate();
   const [data, setData] = useState({ total: 0, approved: 0, pending: 0, monthlyRevenue: 0, batches: [], batchStudents: {} });
 
   useEffect(() => {
@@ -13,12 +13,6 @@ const Statistics = () => {
       .then((res) => setData(res.data))
       .catch((err) => console.error("Failed to fetch statistics", err));
   }, []);
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.removeItem("natyalaya_token");
-    navigate("/login");
-  };
 
   const stats = [
     { title: "Total Students",    value: data.total,                                  icon: <FaUsers /> },
@@ -29,22 +23,7 @@ const Statistics = () => {
 
   return (
     <div className="statistics-page">
-      <nav className="admin-navbar">
-        <div className="admin-nav-logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul className="admin-nav-menu">
-          <li><Link to="/admin">Dashboard</Link></li>
-          <li><Link to="/statistics" className="active">Statistics</Link></li>
-          <li><Link to="/revenue">Revenue</Link></li>
-          <li><Link to="/messages">Messages</Link></li>
-          <li><Link to="/gallerymanager">Gallery Manager</Link></li>
-          <li className="logout-item">
-            <button onClick={handleLogout}><FaSignOutAlt /> Logout</button>
-          </li>
-        </ul>
-      </nav>
+      <AdminNavbar activePage="statistics" />
 
       <section className="statistics-hero">
         <h1>Academy Statistics</h1>

@@ -1,30 +1,12 @@
 import "../css/home.css";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React from "react";
+import Navbar from "../components/Navbar";
 
 function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <>
-    <nav>
-  <div className="logo">
-    <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-    Natya<span>laya</span>
-  </div>
-  <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-    {menuOpen ? "✕" : "☰"}
-  </button>
-  <ul className={menuOpen ? "nav-open" : ""}>
-    <li><Link to="/home" onClick={() => setMenuOpen(false)}>Home</Link></li>
-    <li><Link to="/about" onClick={() => setMenuOpen(false)}>About</Link></li>
-    <li><Link to="/guru" onClick={() => setMenuOpen(false)}>Guru</Link></li>
-    <li><Link to="/gallery" onClick={() => setMenuOpen(false)}>Gallery</Link></li>
-    <li><Link to="/classes" onClick={() => setMenuOpen(false)}>Class Schedules</Link></li>
-    <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link></li>
-    <li><Link to="/register" onClick={() => setMenuOpen(false)}>Register</Link></li>
-    <li><Link to="/login" className="logout-btn" onClick={() => setMenuOpen(false)}>Logout</Link></li>
-  </ul>
-</nav>
+    <Navbar />
       <section className="hero">
         <div className="hero-text">
           <h3>BHARATANATYAM ACADEMY</h3>

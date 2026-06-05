@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/register.css";
 import { registerStudent, createRazorpayOrder } from "../services/api";
+import Navbar from "../components/Navbar";
 
 function Register() {
   const feeMap = {
@@ -113,22 +114,7 @@ function Register() {
 
   return (
     <>
-      <nav>
-        <div className="logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul>
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/guru">Guru</Link></li>
-          <li><Link to="/gallery">Gallery</Link></li>
-          <li><Link to="/classes">Class Schedules</Link></li>
-          <li><Link to="/contact">Contact</Link></li>
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/login" className="logout-btn">Logout</Link></li>
-        </ul>
-      </nav>
+      <Navbar />
 
       <section className="register-section">
         <div className="register-card">

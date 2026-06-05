@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/contact.css";
 import { submitContact } from "../services/api";
+import Navbar from "../components/Navbar";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -49,33 +50,7 @@ function Contact() {
 
   return (
     <>
-      <nav>
-        <div className="logo">
-          <img
-            src={require("../images/logo.png")}
-            alt="Natyalaya Logo"
-          />
-          Natya<span>laya</span>
-        </div>
-
-        <ul>
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/guru">Guru</Link></li>
-          <li><Link to="/gallery">Gallery</Link></li>
-          <li><Link to="/classes">Class Schedules</Link></li>
-          <li><Link to="/contact">Contact</Link></li>
-          <li><Link to="/register">Register</Link></li>
-          <li>
-            <Link
-              to="/login"
-              className="logout-btn"
-            >
-              Logout
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      <Navbar />
 
       <section className="page-hero">
         <h1>Contact Us</h1>

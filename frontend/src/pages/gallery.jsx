@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../css/gallery.css";
 import { getGallery } from "../services/api";
+import Navbar from "../components/Navbar";
 
 const LOCAL_FALLBACK = [
   { _id: "1", title: "Classical Performance", description: "Students showcasing the elegance and discipline of Bharatanatyam on stage.",    imagePath: null, localImage: require("../images/gallery1.jpg") },
@@ -44,22 +45,7 @@ function Gallery() {
 
   return (
     <>
-      <nav>
-        <div className="logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul>
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/guru">Guru</Link></li>
-          <li><Link to="/gallery">Gallery</Link></li>
-          <li><Link to="/classes">Class Schedules</Link></li>
-          <li><Link to="/contact">Contact</Link></li>
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/login" className="logout-btn">Logout</Link></li>
-        </ul>
-      </nav>
+      <Navbar />
 
       <section className="gallery-hero">
         <h4>NATYALAYA GALLERY</h4>

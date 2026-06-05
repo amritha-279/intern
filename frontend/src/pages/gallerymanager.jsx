@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/gallerymanager.css";
-import { FaImages, FaPlus, FaEdit, FaTrash, FaSignOutAlt, FaSave, FaTimes } from "react-icons/fa";
+import { FaImages, FaPlus, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
 import { getGallery, uploadGalleryImage, deleteGalleryImage, updateGalleryImage } from "../services/api";
+import AdminNavbar from "../components/AdminNavbar";
 
 const DEFAULT_ITEMS = [
   { title: "Classical Performance", description: "Students showcasing the elegance and discipline of Bharatanatyam on stage.",      localImage: require("../images/gallery1.jpg") },
@@ -17,7 +18,6 @@ const DEFAULT_ITEMS = [
 ];
 
 const GalleryManager = () => {
-  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [galleryItems, setGalleryItems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
@@ -117,12 +117,6 @@ const GalleryManager = () => {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.removeItem("natyalaya_token");
-    navigate("/login");
-  };
-
   const getImageSrc = (item) => {
     if (item.imagePath) return `https://natyalaya-backend.onrender.com${item.imagePath}`;
     return item.localImage || "";
@@ -130,22 +124,7 @@ const GalleryManager = () => {
 
   return (
     <div className="gallery-page">
-      <nav className="admin-navbar">
-        <div className="admin-nav-logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul className="admin-nav-menu">
-          <li><Link to="/admin">Dashboard</Link></li>
-          <li><Link to="/statistics">Statistics</Link></li>
-          <li><Link to="/revenue">Revenue</Link></li>
-          <li><Link to="/messages">Messages</Link></li>
-          <li><Link to="/gallerymanager" className="active">Gallery Manager</Link></li>
-          <li className="logout-item">
-            <button onClick={handleLogout}><FaSignOutAlt /> Logout</button>
-          </li>
-        </ul>
-      </nav>
+      <AdminNavbar activePage="gallery" />
 
       <section className="gallery-hero">
         <h1>Gallery Manager</h1>

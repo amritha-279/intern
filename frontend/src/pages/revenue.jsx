@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/revenue.css";
-import { FaRupeeSign, FaMoneyBillWave, FaWallet, FaChartLine, FaSignOutAlt } from "react-icons/fa";
+import { FaRupeeSign, FaMoneyBillWave, FaWallet, FaChartLine } from "react-icons/fa";
 import { getRevenue } from "../services/api";
+import AdminNavbar from "../components/AdminNavbar";
 
 const Revenue = () => {
-  const navigate = useNavigate();
   const [data, setData] = useState({
     monthlyRevenue: 0,
     yearlyRevenue: 0,
@@ -20,30 +20,9 @@ const Revenue = () => {
       .catch((err) => console.error("Failed to fetch revenue", err));
   }, []);
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.removeItem("natyalaya_token");
-    navigate("/login");
-  };
-
   return (
     <div className="revenue-page">
-      <nav className="admin-navbar">
-        <div className="admin-nav-logo">
-          <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
-          Natya<span>laya</span>
-        </div>
-        <ul className="admin-nav-menu">
-          <li><Link to="/admin">Dashboard</Link></li>
-          <li><Link to="/statistics">Statistics</Link></li>
-          <li><Link to="/revenue" className="active">Revenue</Link></li>
-          <li><Link to="/messages">Messages</Link></li>
-          <li><Link to="/gallerymanager">Gallery Manager</Link></li>
-          <li className="logout-item">
-            <button onClick={handleLogout}><FaSignOutAlt /> Logout</button>
-          </li>
-        </ul>
-      </nav>
+      <AdminNavbar activePage="revenue" />
 
       <section className="revenue-hero">
         <h1>Revenue Analytics</h1>
