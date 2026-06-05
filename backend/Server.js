@@ -15,6 +15,10 @@ const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 app.use("/uploads", express.static(uploadsDir));
 
+app.get("/", (req, res) => {
+  res.send("Natyalaya Backend Running Successfully 🚀");
+});
+
 // Routes
 app.use("/api/auth", require("./Routes/authRoutes"));
 app.use("/api/user", require("./Routes/UserRoutes"));
@@ -36,6 +40,3 @@ mongoose
   .catch((err) => {
     console.log("MongoDB connection failed", err);
   });
-app.get("/", (req, res) => {
-  res.send("Natyalaya Backend Running Successfully 🚀");
-});
