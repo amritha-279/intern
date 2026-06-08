@@ -45,12 +45,17 @@ const loginUser = async (req, res) => {
 const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (email !== "admin@gmail.com" || password !== "admin1234") {
-      return res.status(401).json({ message: "Invalid admin credentials." });
-    }
+
+    const admin = await User.findOne({ email, role: "admin" });
+    if (!admin) return res.status(401).json({ message: "Invalid admin credentials." });
+
+    const isMatch = admin.password.startsWith("$2")
+      ? await bcrypt.compare(password, admin.password)
+      : password === admin.password;
+    if (!isMatch) return res.status(401).json({ message: "Invalid admin credentials." });
 
     const token = jwt.sign(
-      { email, role: "admin" },
+      { email: admin.email, role: "admin" },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -58,7 +63,7 @@ const loginAdmin = async (req, res) => {
     res.status(200).json({
       message: "Welcome, Admin!",
       token,
-      user: { email, role: "admin" }
+      user: { email: admin.email, role: "admin" }
     });
   } catch (error) {
     res.status(500).json({ message: "Admin login failed.", error: error.message });
