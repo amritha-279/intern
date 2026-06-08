@@ -30,7 +30,7 @@ app.use("/api/statistics", require("./Routes/statisticsRoutes"));
 app.use("/api/payment", require("./Routes/paymentRoutes"));
 
 // Catch-all: send React app for any non-API route (React Router support)
-app.get("*", (req, res) => {
+app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
