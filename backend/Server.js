@@ -15,11 +15,11 @@ const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 app.use("/uploads", express.static(uploadsDir));
 
-app.get("/", (req, res) => {
-  res.send("Natyalaya Backend Running Successfully 🚀");
-});
+// Serve React build static files
+const buildPath = path.join(__dirname, "../frontend/build");
+app.use(express.static(buildPath));
 
-// Routes
+// API Routes
 app.use("/api/auth", require("./Routes/authRoutes"));
 app.use("/api/user", require("./Routes/UserRoutes"));
 app.use("/api/students", require("./Routes/studentRoutes"));
@@ -28,6 +28,11 @@ app.use("/api/gallery", require("./Routes/galleryRoutes"));
 app.use("/api/revenue", require("./Routes/revenueRoutes"));
 app.use("/api/statistics", require("./Routes/statisticsRoutes"));
 app.use("/api/payment", require("./Routes/paymentRoutes"));
+
+// Catch-all: send React app for any non-API route (React Router support)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
 
 mongoose
   .connect(process.env.MONGO_URL)
