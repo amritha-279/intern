@@ -25,10 +25,10 @@ function AdminNavbar({ activePage }) {
 
   return (
     <nav className="admin-navbar" ref={navRef}>
-      <div className="admin-nav-logo">
+      <Link to="/home" className="admin-nav-logo">
         <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
         Natya<span>laya</span>
-      </div>
+      </Link>
       <button className="admin-hamburger" onClick={() => setMenuOpen(!menuOpen)}>
         {menuOpen ? "✕" : "☰"}
       </button>
