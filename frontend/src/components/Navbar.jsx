@@ -31,10 +31,10 @@ function Navbar() {
 
   return (
     <nav ref={navRef}>
-      <div className="logo">
+      <Link to="/home" className="logo">
         <img src={require("../images/logo.png")} alt="Natyalaya Logo" />
         Natya<span>laya</span>
-      </div>
+      </Link>
       <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
         {menuOpen ? "✕" : "☰"}
       </button>
@@ -45,7 +45,7 @@ function Navbar() {
         <li><Link to="/gallery" onClick={close}>Gallery</Link></li>
         <li><Link to="/classes" onClick={close}>Class Schedules</Link></li>
         <li><Link to="/contact" onClick={close}>Contact</Link></li>
-        <li><Link to="/register" onClick={close}>Register</Link></li>
+        <li><Link to="/register" onClick={close}>Form</Link></li>
         {isLoggedIn
           ? <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
           : <li><Link to="/login" className="logout-btn" onClick={close}>Login</Link></li>
