@@ -1,11 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const navRef = useRef(null);
   const close = () => setMenuOpen(false);
+
+  const isLoggedIn = !!(localStorage.getItem("natyalaya_token") || sessionStorage.getItem("natyalaya_token"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("natyalaya_token");
+    localStorage.removeItem("natyalaya_user");
+    sessionStorage.removeItem("natyalaya_token");
+    sessionStorage.removeItem("natyalaya_session");
+    close();
+    navigate("/login");
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -34,7 +46,10 @@ function Navbar() {
         <li><Link to="/classes" onClick={close}>Class Schedules</Link></li>
         <li><Link to="/contact" onClick={close}>Contact</Link></li>
         <li><Link to="/register" onClick={close}>Register</Link></li>
-        <li><Link to="/login" className="logout-btn" onClick={close}>Logout</Link></li>
+        {isLoggedIn
+          ? <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
+          : <li><Link to="/login" className="logout-btn" onClick={close}>Login</Link></li>
+        }
       </ul>
     </nav>
   );

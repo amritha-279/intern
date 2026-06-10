@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../css/register.css";
 import { registerStudent } from "../services/api";
 import Navbar from "../components/Navbar";
 
 function Register() {
+  const navigate = useNavigate();
+  const isLoggedIn = !!(localStorage.getItem("natyalaya_token") || sessionStorage.getItem("natyalaya_token"));
+
   const feeMap = {
     "Beginner Batch": "₹1500/month",
     "Intermediate Batch": "₹2000/month",
@@ -73,6 +76,15 @@ function Register() {
   return (
     <>
       <Navbar />
+      {!isLoggedIn ? (
+        <section className="register-section">
+          <div className="register-card" style={{ textAlign: "center", padding: "60px 20px" }}>
+            <h2>Please Login to Register</h2>
+            <p style={{ margin: "16px 0" }}>You need to be logged in to register for a class.</p>
+            <button className="submit-btn" onClick={() => navigate("/login")}>Go to Login</button>
+          </div>
+        </section>
+      ) : (<>
 
       <section className="register-section">
         <div className="register-card">
@@ -279,6 +291,7 @@ function Register() {
           © 2026 Natyalaya | Preserving Tradition Through Technology
         </div>
       </section>
+      </>)}
     </>
   );
 }
