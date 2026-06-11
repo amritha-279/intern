@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/login.css";
-import { loginUser as loginUserAPI, loginAdmin as loginAdminAPI } from "../services/api";
+import { loginUser as loginUserAPI, loginAdmin as loginAdminAPI, checkEmail as checkEmailAPI } from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,10 +13,8 @@ function Login() {
     password: "",
   });
 
-  const [forgotStep, setForgotStep] = useState(0); // 0=closed, 1=email, 2=new password
+  const [forgotStep, setForgotStep] = useState(0); // 0=closed, 1=email, 2=success
   const [forgotEmail, setForgotEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [forgotError, setForgotError] = useState("");
 
 const handleChange = (e) => {
@@ -26,46 +24,24 @@ const handleChange = (e) => {
     });
   };
 
-  const handleForgotEmailSubmit = () => {
+  const handleForgotEmailSubmit = async () => {
     const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailReg.test(forgotEmail)) {
       setForgotError("Enter a valid email address.");
       return;
     }
-    const stored = JSON.parse(localStorage.getItem("natyalaya_user"));
-    if (!stored || stored.email !== forgotEmail) {
-      setForgotError("No account found with this email.");
-      return;
+    try {
+      await checkEmailAPI({ email: forgotEmail });
+      setForgotError("");
+      setForgotStep(2);
+    } catch (error) {
+      setForgotError(error.response?.data?.message || "No account found with this email.");
     }
-    setForgotError("");
-    setForgotStep(2);
-  };
-
-  const handleResetPassword = () => {
-    const passReg = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
-    if (!passReg.test(newPassword)) {
-      setForgotError("Password must be at least 6 characters with letters and numbers.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setForgotError("Passwords do not match.");
-      return;
-    }
-    const stored = JSON.parse(localStorage.getItem("natyalaya_user"));
-    localStorage.setItem("natyalaya_user", JSON.stringify({ ...stored, password: newPassword }));
-    setForgotStep(0);
-    setForgotEmail("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setForgotError("");
-    alert("Password reset successfully! Please log in.");
   };
 
   const closeForgot = () => {
     setForgotStep(0);
     setForgotEmail("");
-    setNewPassword("");
-    setConfirmPassword("");
     setForgotError("");
   };
 
@@ -194,30 +170,12 @@ const handleChange = (e) => {
 
                 {forgotStep === 2 && (
                   <>
-                    <h3>Reset Password</h3>
-                    <p>Set a new password for <strong>{forgotEmail}</strong></p>
-                    <div className="form-group">
-                      <label>New Password</label>
-                      <input
-                        type="password"
-                        placeholder="New password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Confirm Password</label>
-                      <input
-                        type="password"
-                        placeholder="Confirm new password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                    </div>
-                    {forgotError && <p className="forgot-error">{forgotError}</p>}
-                    <button className="submit-btn" onClick={handleResetPassword}>Reset Password</button>
+                    <h3>Check your email</h3>
+                    <p>A password reset link has been sent to <strong>{forgotEmail}</strong>. Please check your inbox.</p>
+                    <button className="submit-btn" onClick={closeForgot}>OK</button>
                   </>
                 )}
+
               </div>
             </div>
           )}
