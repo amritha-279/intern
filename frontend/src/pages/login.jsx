@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/login.css";
-import { loginUser as loginUserAPI, loginAdmin as loginAdminAPI, checkEmail as checkEmailAPI } from "../services/api";
+import { loginUser as loginUserAPI, loginAdmin as loginAdminAPI, checkEmail as checkEmailAPI, verifyOtp as verifyOtpAPI, resetPassword as resetPasswordAPI } from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,9 +13,13 @@ function Login() {
     password: "",
   });
 
-  const [forgotStep, setForgotStep] = useState(0); // 0=closed, 1=email, 2=success
+  const [forgotStep, setForgotStep] = useState(0); // 0=closed, 1=email, 2=otp, 3=new password
   const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [forgotError, setForgotError] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
 
 const handleChange = (e) => {
     setFormData({
@@ -26,10 +30,8 @@ const handleChange = (e) => {
 
   const handleForgotEmailSubmit = async () => {
     const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailReg.test(forgotEmail)) {
-      setForgotError("Enter a valid email address.");
-      return;
-    }
+    if (!emailReg.test(forgotEmail)) { setForgotError("Enter a valid email address."); return; }
+    setForgotLoading(true);
     try {
       await checkEmailAPI({ email: forgotEmail });
       setForgotError("");
@@ -37,12 +39,41 @@ const handleChange = (e) => {
     } catch (error) {
       setForgotError(error.response?.data?.message || "No account found with this email.");
     }
+    setForgotLoading(false);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!forgotOtp || forgotOtp.length !== 6) { setForgotError("Enter the 6-digit OTP."); return; }
+    setForgotLoading(true);
+    try {
+      await verifyOtpAPI({ email: forgotEmail, otp: forgotOtp });
+      setForgotError("");
+      setForgotStep(3);
+    } catch (error) {
+      setForgotError(error.response?.data?.message || "Incorrect OTP.");
+    }
+    setForgotLoading(false);
+  };
+
+  const handleResetPassword = async () => {
+    const passReg = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    if (!passReg.test(newPassword)) { setForgotError("Password must be at least 6 characters with letters and numbers."); return; }
+    if (newPassword !== confirmPassword) { setForgotError("Passwords do not match."); return; }
+    setForgotLoading(true);
+    try {
+      await resetPasswordAPI({ email: forgotEmail, otp: forgotOtp, newPassword });
+      setForgotStep(0);
+      setForgotEmail(""); setForgotOtp(""); setNewPassword(""); setConfirmPassword(""); setForgotError("");
+      alert("Password reset successfully! Please log in.");
+    } catch (error) {
+      setForgotError(error.response?.data?.message || "Reset failed. Please try again.");
+    }
+    setForgotLoading(false);
   };
 
   const closeForgot = () => {
     setForgotStep(0);
-    setForgotEmail("");
-    setForgotError("");
+    setForgotEmail(""); setForgotOtp(""); setNewPassword(""); setConfirmPassword(""); setForgotError("");
   };
 
   const loginUser = async () => {
@@ -164,15 +195,59 @@ const handleChange = (e) => {
                       />
                     </div>
                     {forgotError && <p className="forgot-error">{forgotError}</p>}
-                    <button className="submit-btn" onClick={handleForgotEmailSubmit}>Continue</button>
+                    <button className="submit-btn" onClick={handleForgotEmailSubmit} disabled={forgotLoading}>
+                      {forgotLoading ? "Sending..." : "Send OTP"}
+                    </button>
                   </>
                 )}
 
                 {forgotStep === 2 && (
                   <>
-                    <h3>Check your email</h3>
-                    <p>A password reset link has been sent to <strong>{forgotEmail}</strong>. Please check your inbox.</p>
-                    <button className="submit-btn" onClick={closeForgot}>OK</button>
+                    <h3>Enter OTP</h3>
+                    <p>A 6-digit OTP has been sent to <strong>{forgotEmail}</strong>. Please check your inbox.</p>
+                    <div className="form-group">
+                      <label>OTP</label>
+                      <input
+                        type="text"
+                        placeholder="Enter 6-digit OTP"
+                        maxLength={6}
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value)}
+                      />
+                    </div>
+                    {forgotError && <p className="forgot-error">{forgotError}</p>}
+                    <button className="submit-btn" onClick={handleVerifyOtp} disabled={forgotLoading}>
+                      {forgotLoading ? "Verifying..." : "Verify OTP"}
+                    </button>
+                  </>
+                )}
+
+                {forgotStep === 3 && (
+                  <>
+                    <h3>Reset Password</h3>
+                    <p>Set a new password for <strong>{forgotEmail}</strong></p>
+                    <div className="form-group">
+                      <label>New Password</label>
+                      <input
+                        type="password"
+                        placeholder="New password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Confirm Password</label>
+                      <input
+                        type="password"
+                        placeholder="Confirm new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                    {forgotError && <p className="forgot-error">{forgotError}</p>}
+                    <button className="submit-btn" onClick={handleResetPassword} disabled={forgotLoading}>
+                      {forgotLoading ? "Resetting..." : "Reset Password"}
+                    </button>
                   </>
                 )}
 
